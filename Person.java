@@ -1,31 +1,24 @@
 public class Person {
     private String name;
-    private Sex sex;
     private int age;
-    // private String parent;
+    private int sex;
 
     public String getName() {
         return name;
+    }
+
+    public int getSex() {
+        return sex;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    // public String getParent() {
-    //     return parent;
-    // }
-
-    // public void setParent(String parent) {
-    //     this.parent = parent;
-    // }
-
-    public void setSex(Sex sex) {
+    public void setSex(int sex) {
         this.sex = sex;
     }
-    public Sex getSex() {
-        return sex;
-    }
+
     public int getAge() {
         return age;
     }
@@ -34,17 +27,18 @@ public class Person {
         this.age = age;
     }
 
-    public Person(String name, int age, Sex sex) {
+    public Person(String name, int age, int sex) {
         this.name = name;
         this.age = age;
         this.sex = sex;
-    }
 
+    }
 
     @Override
     public String toString() {
-        return "Name: " + name +
-                ", Age: " + age +
-                ", Sex: " + sex;
+        return "person{" +
+                "name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

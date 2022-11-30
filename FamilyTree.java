@@ -1,104 +1,107 @@
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
 
-public class FamilyTree {
+public class FamilyTree<T extends Person> {
+
+    ArrayList<String> res = new ArrayList<String>();
     ArrayList<Node> tree;
-    ArrayList<Person> person;
-    private Map<Integer, String> command;
-    private boolean work;
-    Scanner scanner;
 
     public FamilyTree() {
-        ArrayList<Node> tree = new ArrayList<Node>();
-        this.tree = tree;
+        this.tree = new ArrayList<>();
+    }
 
+    public void addNode(T parent, T child, Relations relation) {
+        if (relation == Relations.Parent) {
+            this.tree.add(new Node<Person>(parent, child, Relations.Parent));
+            this.tree.add(new Node<Person>(child, parent, Relations.Child));
+        } else if (relation == Relations.Sibling) {
+            this.tree.add(new Node<Person>(parent, child, Relations.Sibling));
+            this.tree.add(new Node<Person>(child, parent, Relations.Sibling));
+        } else if (relation == Relations.GrandParent) {
+            this.tree.add(new Node<Person>(child, parent, Relations.GrandParent));
+            if (child.getSex() == 0) {
+                this.tree.add(new Node<Person>(parent, child, Relations.GrandDaughter));
+            } else {
+                this.tree.add(new Node<Person>(parent, child, Relations.GrandSon));
+            }
+        }
 
-        command = new TreeMap<>();
-        command.put(1, "stop");
-        command.put(2, "searchByName");
     }
 
     /**
+     * Поиск по Возрасту
      * 
-     * @param parent
-     * @param child
-     */
-    public void addParent(Person parent, Person child) {
-        this.tree.add(new Node(parent, child, Relations.Parent));
-        this.tree.add(new Node(child, parent, Relations.Child));
-    }
-
-    public ArrayList<String> viewAll(){
-        ArrayList<String> res = new ArrayList<String>();
-        for (Node node: this.tree){
-            res.add(node.getPerson().getName());  
-        }
-        return res;
-    }
-
-        /**
-     * Поиск по имени
-     * @param name - 
+     * @param age -
      * @return ArrayList
      */
-    public ArrayList<String> searchParentByName(String name){
-        ArrayList<String> res = new ArrayList<String>();
-        for (Node node: this.tree) {
-            if (node.getPerson().getName() == name){
-                if(node.getRelation() == Relations.Parent){
-                    
-                    res.add(node.getParent().getName());
-                    
-                }
+    @SuppressWarnings("unchecked")
+    public ArrayList<String> searchByAge(int age) {
+
+        for (Node<Person> node : this.tree) {
+            if (node.getPerson().getAge() < age) {
+                res.add(node.getPerson().getName());
             }
         }
         return res;
     }
 
-    public ArrayList<String> searchChildrenByName(String name){
-        ArrayList<String> res = new ArrayList<String>();
-        for (Node node: this.tree) {
-            if (node.getPerson().getName() == name){
-                if(node.getRelation() == Relations.Child){
+    /**
+     * Поиск по имени
+     * 
+     * @param name -
+     * @return ArrayList
+     */
+
+    @SuppressWarnings("unchecked")
+    public ArrayList<String> searchByName(String name) {
+        for (Node<Person> node : this.tree) {
+            if (node.getPerson().getName() == name) {
+                if (node.getRelation() == Relations.Parent) {
+                    res.add(node.getParent().getName());
+                }
+                if (node.getRelation() == Relations.Child) {
                     res.add(node.getParent().getName());
                 }
             }
         }
         return res;
-    }
-    
-    // TODO: Не работает. Как будто из за того что персон создаем в майне а запускаем тут, но это не точно
-    public void execute(int command){
-        if (!this.command.containsKey(command)){
-            return;
-        }
-        switch (this.command.get(command)){
-            case "stop":
-                work = false;
-                break;
-            case "searchByName":
-                System.out.println("Введите имя которое хотите найти: ");
-                if (scanner.hasNext()){
-                    String name = scanner.next();
-                    System.out.println(searchParentByName(name));
-                    System.out.println(name);
-                }
-                break;
-        }
+
     }
 
-    public void console(){
-        work = true;
-        scanner = new Scanner(System.in);
-        while (work){
-            System.out.println(this.command);
-            if (scanner.hasNextInt()){
-                execute(scanner.nextInt());
+    @SuppressWarnings("unchecked")
+    public void console() {
+        for (Node<Person> node : this.tree) {
+            if (node.getRelation() == Relations.Parent) {
+                System.out.println(getRelatedPersons(node.getPerson(), Relations.Parent));
             }
         }
-        System.out.println("До свидания!");
     }
 
+    @SuppressWarnings("unchecked")
+    public ArrayList<String> getRelatedPersons(Person person, Relations relation) {
+        ArrayList<String> ress = new ArrayList<String>();
+
+        for (Node<Person> node : this.tree) {
+            if (node.getPerson().getName() == person.getName()
+                    && node.getRelation() == relation) {
+                ress.add(node.getParent().getName());
+            }
+        }
+        return ress;
+    }
+
+    public ArrayList<String> getChild(T person) {
+        return getRelatedPersons(person, Relations.Parent);
+    }
+
+    public ArrayList<String> getParent(T person) {
+        return getRelatedPersons(person, Relations.Child);
+    }
+
+    public ArrayList<String> getGrandParent(T person) {
+        return getRelatedPersons(person, Relations.GrandParent);
+    }
+
+    public ArrayList<String> getSibling(T person) {
+        return getRelatedPersons(person, Relations.Sibling);
+    }
 }

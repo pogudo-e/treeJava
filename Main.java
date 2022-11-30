@@ -1,38 +1,30 @@
-import java.util.ArrayList;
 
 public class Main {
-
     public static void main(String[] args) {
-        Person eva = new Person("Ева", 52, Sex.Male);
-        Person mahim = new Person("Максим", 34, Sex.Female);
-        Person masha = new Person("Маша", 29, Sex.Male);
-        Person mihail = new Person("Михаил", 27, Sex.Female);
-        Person jane = new Person("Женя", 2, Sex.Female);
-        Person ivan = new Person("Ваня", 5, Sex.Female);
-        
-        
-        FamilyTree tree = new FamilyTree();
-        tree.addParent(eva, jane);
-        tree.addParent(mahim, jane);
-        tree.addParent(mahim, mihail);
-        tree.addParent(masha, ivan);
-        tree.addParent(mihail, ivan);
+        Person irina = new Person("Ирина", 56, 0);
+        Person vasya = new Person("Вася", 30, 1);
+        Person masha = new Person("Маша", 25, 0);
+        Person mihail = new Person("Михаил", 27, 1);
+        Person jane = new Person("Женя", 2, 1);
+        Person ivan = new Person("Ваня", 5, 1);
+        FamilyTree<Person> tree = new FamilyTree<>();
+        tree.addNode(irina, masha, Relations.Parent);
+        tree.addNode(irina, vasya, Relations.Parent);
+        tree.addNode(irina, mihail, Relations.Parent);
 
-        System.out.println(mahim);
-        printer(tree.searchParentByName("Максим")); // Женя Михаил
-        printer(tree.searchParentByName("Маша")); // Ваня
-        printer(tree.searchChildrenByName("Ваня")); // Маша Михаил
+        tree.addNode(vasya, jane, Relations.Parent);
+        tree.addNode(vasya, ivan, Relations.Parent);
 
+        tree.addNode(jane, ivan, Relations.Sibling);
 
+        tree.addNode(irina, jane, Relations.GrandParent);
 
-        // tree.console();
-        // System.out.println(tree.viewAll());
+        System.out.println("Поиск по имени - " + masha.getName() + " : " + tree.searchByName("Маша"));
+        System.out.println(tree.getGrandParent(jane)); // Бабушка Жени
+        // System.out.println(tree.getGrandParent(irina));
+        System.out.println(tree.getSibling(jane)); // Брат Жени
+        System.out.println(tree.getChild(vasya)); // Дети Васи
+        System.out.println(tree.getParent(ivan)); // Родитель Вани
     }
-    public static void printer(ArrayList<String> arr){
-        for (String ele : arr) {
-            System.out.print(ele);
-            System.out.print(" ");
-        }
-        System.out.println();
-    }
+
 }

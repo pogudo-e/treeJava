@@ -1,4 +1,9 @@
 public enum Relations {
     Parent,
-    Child
+    Child,
+    Sibling,
+    Cousin,
+    GrandParent,
+    GrandSon,
+    GrandDaughter
 }
